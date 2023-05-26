@@ -7,7 +7,7 @@
 
 import sys
 from antlr4 import *
-from gramatica2 import gramatica2
+from gramatica import gramatica
 
 # Verificando se todos os argumentos necessarios foram passados
 if len(sys.argv) < 3:
@@ -23,7 +23,7 @@ try:
     input_stream = FileStream(input_file_name, encoding='utf-8')
 
     # Utilizando o lexer criado com o ANTLR
-    lexer = gramatica2(input_stream)
+    lexer = gramatica(input_stream)
     token = lexer.nextToken()
 
     # Listando os tipos definidos para facilitar
@@ -37,18 +37,18 @@ try:
         txt = '\'' + token.text + '\''
         
         # Identificando o tipo do token
-        typeStr = gramatica2.symbolicNames[token.type]
+        typeStr = gramatica.symbolicNames[token.type]
 
         # Por fim definindo o outout, e se houve erro ou nao
-        if (typeStr == 'Nao_Fechado'):
+        if (typeStr == 'COMENTARIO_NAO_FECHADO'):
             output.write('Linha ' + str(token.line) + ': comentario nao fechado\n')
             break
 
-        elif (typeStr == 'Literal_Nao_Fechada'):
+        elif (typeStr == 'CADEIA_LITERAL_NAO_FECHADA'):
             output.write('Linha ' + str(token.line) + ': cadeia literal nao fechada\n')
             break
 
-        elif(typeStr == 'ERR'):
+        elif(typeStr == 'NAO_RECONHECIDO'):
             output.write('Linha ' + str(token.line) + ': ' + token.text + ' - simbolo nao identificado\n')
             break
 

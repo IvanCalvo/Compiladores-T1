@@ -1,5 +1,9 @@
 lexer grammar gramatica;
 
+fragment
+ESC_SEQ	: '\\\'';
+
+// Definicao das palavras chave
 PALAVRA_CHAVE
     : 'algoritmo' | 'declare' | 'literal' | 'inteiro' | 'real' | 'logico' | 'ou' | 'nao' | 'leia' | 'se' | 'fim_se' 
     | 'senao' | 'entao' | 'falso' | 'verdadeiro' | 'caso' | 'e' | 'fim_caso' | 'escreva' | 'seja' | 'para' | 'ate' | 'faca' 
@@ -7,26 +11,20 @@ PALAVRA_CHAVE
     | 'var' | 'fim_procedimento' | 'funcao' | 'fim_funcao' | 'retorne' | 'constante' | 'fim_algoritmo'
     ;
 
-NUM_INT : ('0'..'9')+ ;
+// Numeros inteiros e reais
+NUM_INT 
+    :   ('0'..'9')+ ;
 
-NUM_REAL : ('0'..'9')+('.'('0'..'9')+)?;
+NUM_REAL 
+    :   ('0'..'9')+('.'('0'..'9')+)?
+    ;
 
+// Identificadores
 IDENT
-    : [A-Za-z_][A-Za-z0-9_]*
+    :   ([a-zA-Z])([a-zA-Z]|'0'..'9'|'_')*
     ;
 
-CADEIA
-    : '"' ( ESC_SEQ | ~('\''|'\\') )* '"'
-	;
-
-fragment
-ESC_SEQ	: '\\\'';
-
-
-COMENTARIO
-    :   '{' ~('\n'|'\r')* '\r'? '}' '\n' -> skip
-    ;
-
+// Ignorando White Space
 WS  
     :   ( ' '
         | '\t'
@@ -35,7 +33,25 @@ WS
         ) -> skip
     ;
 
-DOIS_PONTOS: ':' ;
+// Ignorando comentario, mas acusando erro de comentario nao fechado
+COMENTARIO
+    :   '{' (~('\n'|'\r'|'{'|'}'))* '}' '\r'? '\n'? -> skip
+    ;
+
+COMENTARIO_NAO_FECHADO
+    :   '{' (~('\n'|'\r'|'{'|'}'))* '\r'? '\n'?
+    ;
+
+CADEIA
+    :   '"' ( ESC_SEQ | ~('"'|'\\'|'\n'|'\r') )* '"'
+	;
+
+// Acusando erro de cadeia literal nao fechada
+CADEIA_LITERAL_NAO_FECHADA
+    :   '"' ( ESC_SEQ | ~('"'|'\\') )* '\r'? '\n'?
+    ;
+
+DOIS_PONTOS: ':' | '..';
 
 ABRE_PARENTESES: '(' | '[';
 
@@ -43,6 +59,7 @@ FECHA_PARENTESES: ')' | ']';
 
 VIRGULA: ',' ;
 
+// Operadores
 OP_RELACIONAL	:	'>' | '>=' | '<' | '<=' | '<>' | '=';
 
 OP_ATRIBUICAO : '<-';
@@ -51,4 +68,5 @@ OP_ACESSO: '.';
 
 OP_ARITMETICO	:	'+' | '-' | '*' | '/' | '%' | '^' | '&';
 
-ERR : ~('a');
+// Simbolos nao reconhecidos
+NAO_RECONHECIDO : ~('a');
