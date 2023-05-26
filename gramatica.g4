@@ -5,10 +5,10 @@ ESC_SEQ	: '\\\'';
 
 // Definicao das palavras chave
 PALAVRA_CHAVE
-    : 'algoritmo' | 'declare' | 'literal' | 'inteiro' | 'real' | 'logico' | 'ou' | 'nao' | 'leia' | 'se' | 'fim_se' 
-    | 'senao' | 'entao' | 'falso' | 'verdadeiro' | 'caso' | 'e' | 'fim_caso' | 'escreva' | 'seja' | 'para' | 'ate' | 'faca' 
-    | 'fim_para' | 'enquanto' | 'fim_enquanto' | 'registro' | 'fim_registro' | 'tipo' | 'procedimento' 
-    | 'var' | 'fim_procedimento' | 'funcao' | 'fim_funcao' | 'retorne' | 'constante' | 'fim_algoritmo'
+    : 'algoritmo' | 'fim_algoritmo'| 'declare' | 'literal' | 'inteiro' | 'real' | 'logico' | 'ou' | 'nao' | 'leia' | 'se' | 'fim_se' 
+    | 'senao' | 'entao' | 'falso' | 'verdadeiro' | 'caso' | 'fim_caso' | 'e' | 'escreva' | 'seja' | 'para' | 'fim_para' | 'ate' | 'faca' 
+    | 'enquanto' | 'fim_enquanto' | 'registro' | 'fim_registro' | 'tipo' | 'procedimento' | 'fim_procedimento' 
+    | 'var' | 'funcao' | 'fim_funcao' | 'retorne' | 'constante' 
     ;
 
 // Numeros inteiros e reais
@@ -21,7 +21,7 @@ NUM_REAL
 
 // Identificadores
 IDENT
-    :   ([a-zA-Z])([a-zA-Z]|'0'..'9'|'_')*
+    :   [a-zA-Z][a-zA-Z0-9_]*
     ;
 
 // Ignorando White Space
@@ -35,7 +35,7 @@ WS
 
 // Ignorando comentario, mas acusando erro de comentario nao fechado
 COMENTARIO
-    :   '{' (~('\n'|'\r'|'{'|'}'))* '}' '\r'? '\n'? -> skip
+    :   '{' ~[\r\n{}]* '}' [\r]? [\n]? -> skip
     ;
 
 COMENTARIO_NAO_FECHADO
@@ -43,7 +43,7 @@ COMENTARIO_NAO_FECHADO
     ;
 
 CADEIA
-    :   '"' ( ESC_SEQ | ~('"'|'\\'|'\n'|'\r') )* '"'
+    :   '"' (~["\\\r\n] | ESC_SEQ)* '"'
 	;
 
 // Acusando erro de cadeia literal nao fechada
